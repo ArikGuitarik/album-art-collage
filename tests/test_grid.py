@@ -44,3 +44,11 @@ def test_swapping():
     assert grid.get(1, 2) == {1}
     with pytest.raises(IndexError):
         grid.swap(3, 0, 1, 3)
+
+
+def test_iteration():
+    grid = SquareGrid(dummy_objects)
+    elements = []
+    for row, col in grid.get_all_coordinates():
+        elements.append(grid.get(row, col))
+    assert elements == dummy_objects

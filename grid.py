@@ -18,6 +18,12 @@ class SquareGrid(Generic[T]):
     def _coordinate_to_index(self, row: int, col: int) -> int:
         return row * self._side_length + col
 
+    def _index_to_coordinate(self, index: int) -> tuple[int, int]:
+        return index // self._side_length, index % self._side_length
+
+    def get_all_coordinates(self) -> list[tuple[int, int]]:
+        return [self._index_to_coordinate(index) for index in range(len(self._elements))]
+
     def get(self, row: int, col: int) -> T:
         return self._elements[self._coordinate_to_index(row, col)]
 

@@ -9,8 +9,16 @@ def test_image_creation():
     pixels = np.ones((64, 64, 3)) * example_value
     img = Image(pixels)
     assert img.get_pixels()[0, 0, 0] == example_value
+    assert img.get_pixels().shape == (64, 64, 3)
+
+
+def test_image_creation_invalid_range():
     with pytest.raises(ValueError):
-        Image(pixels * 3)
+        Image(np.ones((64, 64, 3)) * 3)
+
+
+def test_image_creation_invalid_shape():
+    with pytest.raises(ValueError):
         Image(np.ones((10, 10, 1)))
 
 

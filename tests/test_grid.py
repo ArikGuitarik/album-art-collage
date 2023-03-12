@@ -1,21 +1,24 @@
 import pytest
 from grid import SquareGrid
 
-dummy_objects = [{i} for i in range(9)]
+
+@pytest.fixture
+def dummy_objects():
+    return [{i} for i in range(9)]
 
 
-def test_grid_creation():
+def test_grid_creation(dummy_objects):
     grid = SquareGrid(dummy_objects)
     assert grid.shape == (3, 3)
     assert grid.to_list() == dummy_objects
 
 
-def test_reject_non_square_number_of_elements():
+def test_reject_non_square_number_of_elements(dummy_objects):
     with pytest.raises(ValueError):
         SquareGrid(dummy_objects + [{10}])
 
 
-def test_getter():
+def test_getter(dummy_objects):
     grid = SquareGrid(dummy_objects)
     assert grid.get(0, 0) == {0}
     assert grid.get(2, 2) == {8}
@@ -26,7 +29,7 @@ def test_getter():
         grid.get(0, 3)
 
 
-def test_setter():
+def test_setter(dummy_objects):
     grid = SquareGrid(dummy_objects)
     element_to_add = {42}
     grid.set(2, 1, element_to_add)
@@ -35,7 +38,7 @@ def test_setter():
         grid.set(3, 0, element_to_add)
 
 
-def test_swapping():
+def test_swapping(dummy_objects):
     grid = SquareGrid(dummy_objects)
     grid.swap(0, 0, 0, 0)
     assert grid.to_list() == dummy_objects
@@ -46,7 +49,7 @@ def test_swapping():
         grid.swap(3, 0, 1, 3)
 
 
-def test_iteration():
+def test_iteration(dummy_objects):
     grid = SquareGrid(dummy_objects)
     elements = []
     for row, col in grid.get_all_coordinates():

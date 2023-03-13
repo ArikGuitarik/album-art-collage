@@ -3,7 +3,7 @@ from skimage.io import imread, imsave
 from skimage.util import img_as_float
 
 from grid import SquareGrid
-from images import Image, ImageGridRenderer
+from images import Image, Collage
 
 
 def load_images_in_dir(dir_path: str):
@@ -21,7 +21,7 @@ def generate_collage_from_image_dir():
     image_dir = input("directory with image files:")
     images = load_images_in_dir(image_dir)
     grid = SquareGrid.create_by_truncating_excess_elements(images)
-    renderer = ImageGridRenderer(grid, (128, 128))
+    renderer = Collage(grid, (128, 128))
     collage = renderer.render()
     imsave("collage.jpg", collage.get_pixels())
 

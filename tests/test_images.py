@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 
-from images import Image, ImageGridRenderer
+from images import Image, Collage
 from grid import SquareGrid
 
 
@@ -43,7 +43,7 @@ def example_img_grid():
 
 
 def test_collage_rendering(example_img_grid):
-    result = ImageGridRenderer(example_img_grid, (64, 64)).render().get_pixels()
+    result = Collage(example_img_grid, (64, 64)).render().get_pixels()
     assert result[0, 0, 0] == 0
     assert result[28, 104, 2] == 0.25
     assert result[90, 10, 2] == 0.5
@@ -52,9 +52,49 @@ def test_collage_rendering(example_img_grid):
 
 
 def test_collage_rendering_resized(example_img_grid):
-    result = ImageGridRenderer(example_img_grid, (32, 32)).render().get_pixels()
+    collage = Collage(example_img_grid, (32, 32))
+    result = collage.render().get_pixels()
     assert result[0, 0, 0] == 0
     assert result[14, 52, 2] == 0.25
     assert result[45, 5, 2] == 0.5
     assert result[35, 35, 1] == 0.75
     assert result.shape == (64, 64, 3)
+    collage.img_shape = (64, 64)
+    result = collage.render().get_pixels()
+    assert result[0, 0, 0] == 0
+    assert result[28, 104, 2] == 0.25
+    assert result[90, 10, 2] == 0.5
+    assert result[70, 70, 1] == 0.75
+    assert result.shape == (128, 128, 3)
+
+
+def test_get_pixel_coordinates(example_img_grid):
+    collage = Collage(example_img_grid, (64, 64))
+    assert collage.get_top_left_pixel_coordinates(0, 0) == (0, 0)
+    assert collage.get_top_left_pixel_coordinates(1, 0) == (64, 0)
+    assert collage.get_top_left_pixel_coordinates(0, 1) == (0, 64)
+    assert collage.get_top_left_pixel_coordinates(1, 1) == (64, 64)
+    with pytest.raises(IndexError):
+        collage.get_top_left_pixel_coordinates(-1, 0)
+    with pytest.raises(IndexError):
+        collage.get_top_left_pixel_coordinates(2, 0)
+    with pytest.raises(IndexError):
+        collage.get_top_left_pixel_coordinates(0, -1)
+    with pytest.raises(IndexError):
+        collage.get_top_left_pixel_coordinates(0, 2)
+
+
+def test_get_grid_coordinates(example_img_grid):
+    collage = Collage(example_img_grid, (64, 64))
+    assert collage.get_grid_coordinates(0, 0) == (0, 0)
+    assert collage.get_grid_coordinates(28, 104) == (0, 1)
+    assert collage.get_grid_coordinates(90, 10) == (1, 0)
+    assert collage.get_grid_coordinates(70, 70) == (1, 1)
+    with pytest.raises(IndexError):
+        collage.get_grid_coordinates(-1, 0)
+    with pytest.raises(IndexError):
+        collage.get_grid_coordinates(128, 0)
+    with pytest.raises(IndexError):
+        collage.get_grid_coordinates(0, -1)
+    with pytest.raises(IndexError):
+        collage.get_grid_coordinates(0, 128)

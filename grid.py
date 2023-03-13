@@ -7,13 +7,19 @@ T = TypeVar("T")
 class SquareGrid(Generic[T]):
     def __init__(self, elements: list[T]):
         self._elements = elements
-        self._side_length = self._largest_square_number_below(len(elements))
-        if self._side_length ** 2 != len(elements):
+        largest_fitting_square = self._largest_square_number_less_than_or_equal_to(len(elements))
+        if largest_fitting_square != len(elements):
             raise ValueError("Number of elements has to be a square number.")
+        self._side_length = int(sqrt(largest_fitting_square))
+
+    @classmethod
+    def create_by_truncating_excess_elements(cls, elements: list[T]):
+        """Construct the largest possible SquareGrid given elements, by truncating what doesn't fit into a square"""
+        return cls(elements[:SquareGrid._largest_square_number_less_than_or_equal_to(len(elements))])
 
     @staticmethod
-    def _largest_square_number_below(number) -> int:
-        return int(floor(sqrt(number)))
+    def _largest_square_number_less_than_or_equal_to(number: float) -> int:
+        return floor(sqrt(number)) ** 2
 
     def _coordinate_to_index(self, row: int, col: int) -> int:
         if not (0 <= row < self._side_length and 0 <= col < self._side_length):

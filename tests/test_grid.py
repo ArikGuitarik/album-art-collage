@@ -56,3 +56,11 @@ def test_iteration(dummy_objects):
     for row, col in grid.get_all_coordinates():
         elements.append(grid.get(row, col))
     assert elements == dummy_objects
+
+
+def test_truncation(dummy_objects):
+    extended_dummy_objects = dummy_objects + [{10}, {11}]
+    truncated_grid = SquareGrid.create_by_truncating_excess_elements(extended_dummy_objects)
+    assert truncated_grid.to_list() == dummy_objects
+    truncated_but_unchanged_grid = SquareGrid.create_by_truncating_excess_elements(dummy_objects)
+    assert truncated_but_unchanged_grid.to_list() == dummy_objects

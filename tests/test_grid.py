@@ -26,6 +26,7 @@ def test_getter(dummy_objects):
     assert grid.get(2, 0) == {6}
     with pytest.raises(IndexError):
         grid.get(3, 1)
+    with pytest.raises(IndexError):
         grid.get(0, 3)
 
 

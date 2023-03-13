@@ -16,6 +16,8 @@ class SquareGrid(Generic[T]):
         return int(floor(sqrt(number)))
 
     def _coordinate_to_index(self, row: int, col: int) -> int:
+        if not (0 <= row < self._side_length and 0 <= col < self._side_length):
+            raise IndexError(f"Invalid coordinates {row, col} for grid of shape {self.shape}")
         return row * self._side_length + col
 
     def _index_to_coordinate(self, index: int) -> tuple[int, int]:

@@ -47,18 +47,18 @@ class Collage:
         img_height, img_width = self.img_shape
         img_pixels = self.img_grid.get(row, col).get_pixels(self.img_shape)
         x, y = self.get_top_left_pixel_coordinates(row, col)
-        self._pixels[x:x + img_height, y: y + img_width] = img_pixels
+        self._pixels[y: y + img_height, x:x + img_width] = img_pixels
 
     def get_top_left_pixel_coordinates(self, row: int, col: int) -> tuple[int, int]:
         self._reject_if_out_of_bounds(row, col)
         img_height, img_width = self.img_shape
-        return row * img_height, col * img_width
+        return col * img_width, row * img_height
 
     def get_grid_coordinates(self, x: int, y: int) -> tuple[int, int]:
         img_height, img_width = self.img_shape
-        row, col = x // img_height, y // img_width
+        row, col = y // img_height, x // img_width
         self._reject_if_out_of_bounds(row, col)
-        return x // img_height, y // img_width
+        return row, col
 
     def _reject_if_out_of_bounds(self, row: int, col: int):
         if not (0 <= row < self.img_grid.shape[0] and 0 <= col < self.img_grid.shape[1]):

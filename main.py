@@ -4,6 +4,7 @@ from skimage.util import img_as_float
 
 from grid import SquareGrid
 from images import Image, Collage
+from pyplot_ui import CollagePltUi
 
 
 def load_images_in_dir(dir_path: str):
@@ -21,9 +22,9 @@ def generate_collage_from_image_dir():
     image_dir = input("directory with image files:")
     images = load_images_in_dir(image_dir)
     grid = SquareGrid.create_by_truncating_excess_elements(images)
-    renderer = Collage(grid, (128, 128))
-    collage = renderer.render()
-    imsave("collage.jpg", collage.get_pixels())
+    collage = Collage(grid, (256, 256))
+    CollagePltUi(collage)
+    imsave("collage.jpg", collage.render().get_pixels())
 
 
 if __name__ == '__main__':

@@ -23,8 +23,7 @@ class Image:
         """Get pixels of the image, resized to shape=(height, width) if shape is not None"""
         if shape is None:
             return self._pixels
-        resized = resize(self._pixels, shape)
-        return (255 * resized).astype(np.uint8)
+        return resize(self._pixels, shape, preserve_range=True)
 
 
 class Collage:

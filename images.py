@@ -5,7 +5,7 @@ from grid import SquareGrid
 
 
 class Image:
-    """Image with RGB pixels of the shape (height, width, 3) with values in the range [0, 1]"""
+    """Image with RGB pixels of the shape (height, width, 3) with uint8 values in the range [0, 255]"""
 
     def __init__(self, pixels: np.ndarray):
         self._reject_invalid_params(pixels)
@@ -15,16 +15,16 @@ class Image:
     def _reject_invalid_params(pixels: np.ndarray):
         if len(pixels.shape) != 3 or pixels.shape[2] != 3:
             raise ValueError(f"Image should have shape (height, width, 3), but is {pixels.shape}.")
-        min_pixel_value, max_pixel_value = np.min(pixels), np.max(pixels)
-        if min_pixel_value < 0 or max_pixel_value > 1:
-            raise ValueError(f"Pixel values should be in [0, 1], but are in [{min_pixel_value, max_pixel_value}]")
+        if pixels.dtype != np.uint8:
+            raise TypeError(f"Sub-pixel values should be encoded as uint8 with values in [0, 255], not {pixels.dtype}.")
 
     @lru_cache(maxsize=None)
     def get_pixels(self, shape: tuple[int, int] = None) -> np.ndarray:
         """Get pixels of the image, resized to shape=(height, width) if shape is not None"""
         if shape is None:
             return self._pixels
-        return resize(self._pixels, shape)
+        resized = resize(self._pixels, shape)
+        return (255 * resized).astype(np.uint8)
 
 
 class Collage:
@@ -43,7 +43,7 @@ class Collage:
         grid_height, grid_width = self.img_grid.shape
         img_height, img_width = self.img_shape
         collage_height, collage_width = grid_height * img_height, grid_width * img_width
-        self._pixels = np.zeros((collage_height, collage_width, 3))
+        self._pixels = np.zeros((collage_height, collage_width, 3), dtype=np.uint8)
 
     def _place_image(self, row: int, col: int):
         img_height, img_width = self.img_shape

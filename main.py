@@ -1,6 +1,5 @@
 import glob
 from skimage.io import imread, imsave
-from skimage.util import img_as_float
 
 from grid import SquareGrid
 from images import Image, Collage
@@ -11,7 +10,7 @@ def load_images_in_dir(dir_path: str):
     result = []
     for image_file_path in sorted(glob.glob(dir_path + "/*.*")):
         try:
-            img = Image(img_as_float(imread(image_file_path)))
+            img = Image(imread(image_file_path))
             result.append(img)
         except Exception as e:
             print(f"Problem with img {image_file_path}: {e}")

@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 from skimage.transform import resize
 from skimage.io import imread
 from grid import SquareGrid
@@ -63,7 +64,7 @@ class Collage:
         return img_height, img_width
 
     def _resize_images(self):
-        for img in self.img_grid.to_list():
+        for img in tqdm(self.img_grid.to_list(), desc='Resizing'):
             img.resize(self.img_shape)
 
     def render(self) -> Image:

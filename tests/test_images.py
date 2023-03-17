@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 
-from images import Image, Collage
+from images import Image, ImageFromFile, Collage
 from grid import SquareGrid
 
 
@@ -34,6 +34,17 @@ def test_image_resizing():
     probe_pixels = [downsized_pixels[1, 1, 0], downsized_pixels[1, 4, 0],
                     downsized_pixels[4, 1, 0], downsized_pixels[4, 4, 0]]
     np.testing.assert_allclose(probe_pixels, [20, 40, 60, 80], atol=1)
+
+
+def test_image_from_file():
+    img = ImageFromFile("data/dummy_cover.jpg")
+    assert img.pixels.shape == (100, 100, 3)
+    assert all(img.pixels[0, 0] == [254, 0, 0])
+    assert all(img.pixels[99, 99] == [0, 0, 254])
+    img.resize((50, 50))
+    assert img.pixels.shape == (50, 50, 3)
+    img.reload_original()
+    assert img.pixels.shape == (100, 100, 3)
 
 
 @pytest.fixture

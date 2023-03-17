@@ -1,6 +1,6 @@
-from functools import lru_cache
 import numpy as np
 from skimage.transform import resize
+from skimage.io import imread
 from grid import SquareGrid
 
 
@@ -18,19 +18,53 @@ class Image:
         if pixels.dtype != np.uint8:
             raise TypeError(f"Sub-pixel values should be encoded as uint8 with values in [0, 255], not {pixels.dtype}.")
 
-    @lru_cache(maxsize=None)
-    def get_pixels(self, shape: tuple[int, int] = None) -> np.ndarray:
-        """Get pixels of the image, resized to shape=(height, width) if shape is not None"""
-        if shape is None:
-            return self._pixels
-        return resize(self._pixels, shape, preserve_range=True)
+    @property
+    def pixels(self) -> np.ndarray:
+        return self._pixels
+
+    def resize(self, shape: tuple[int, int]):
+        self._pixels = resize(self._pixels, shape, preserve_range=True)
+
+
+class ImageFromFile(Image):
+    def __init__(self, image_path: str):
+        self._image_path = image_path
+        pixels = self._load_image_file(image_path)
+        super().__init__(pixels)
+
+    @staticmethod
+    def _load_image_file(image_path: str):
+        return imread(image_path)
+
+    def reload_original(self):
+        pixels = self._load_image_file(self._image_path)
+        self._reject_invalid_params(pixels)
+        self._pixels = pixels
 
 
 class Collage:
-    def __init__(self, img_grid: SquareGrid[Image], img_shape: tuple[int, int]):
+    """A Collage merges individual Images into one, aligned as in the grid it comes in.
+
+    All images will be resized to the same size in such a way that the shape of the resulting collage will be as close
+    as possible to desired_shape.
+    """
+
+    def __init__(self, img_grid: SquareGrid[Image], desired_shape: tuple[int, int]):
         self.img_grid = img_grid
-        self.img_shape = img_shape
+        self.img_shape = self._infer_img_shape(desired_shape)
+        self._resize_images()
         self._pixels = None
+
+    def _infer_img_shape(self, desired_collage_shape: tuple[int, int]):
+        collage_height, collage_width = desired_collage_shape
+        grid_height, grid_width = self.img_grid.shape
+        img_height = int(np.round(collage_height / grid_height))
+        img_width = int(np.round(collage_width / grid_height))
+        return img_height, img_width
+
+    def _resize_images(self):
+        for img in self.img_grid.to_list():
+            img.resize(self.img_shape)
 
     def render(self) -> Image:
         self._init_pixels()
@@ -46,7 +80,7 @@ class Collage:
 
     def _place_image(self, row: int, col: int):
         img_height, img_width = self.img_shape
-        img_pixels = self.img_grid.get(row, col).get_pixels(self.img_shape)
+        img_pixels = self.img_grid.get(row, col).pixels
         x, y = self.get_top_left_pixel_coordinates(row, col)
         self._pixels[y: y + img_height, x:x + img_width] = img_pixels
 

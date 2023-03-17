@@ -12,7 +12,7 @@ class CollagePltUi:
         with mpl.rc_context({'toolbar': 'None'}):
             self.fig, self.ax = plt.subplots()
             self.fig.canvas.mpl_connect('button_press_event', self.on_click)
-            self.imshow = plt.imshow(self.collage.render().get_pixels())
+            self.imshow = plt.imshow(self.collage.render().pixels)
             plt.axis('off')
             plt.show()
 
@@ -30,7 +30,7 @@ class CollagePltUi:
         self.redraw()
 
     def redraw(self):
-        self.imshow.set_data(self.collage.render().get_pixels())
+        self.imshow.set_data(self.collage.render().pixels)
         self._render_selection()
         plt.draw()
 

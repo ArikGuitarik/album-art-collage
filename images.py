@@ -28,6 +28,13 @@ class Image:
 
 
 class ImageFromFile(Image):
+    """Image that is loaded from a file in image_path and can restore its original resolution even after downsizing
+
+    Purpose:
+    - Handles importing an image from a file stored at location given by image_path
+    - You can resize it for faster processing, then reload the original size if you need it for high-res rendering.
+    """
+
     def __init__(self, image_path: str):
         self._image_path = image_path
         pixels = self._load_image_file(image_path)

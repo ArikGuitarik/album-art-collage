@@ -12,10 +12,10 @@ class CollagePltUi:
         self.selected_grid_coordinates = None
         with mpl.rc_context({'toolbar': 'None'}):
             self.fig, self.ax = plt.subplots()
-            self.fig.canvas.mpl_connect('button_press_event', self.on_click)
-            self.imshow = plt.imshow(self.collage.render().pixels)
-            plt.axis('off')
-            plt.show()
+        self.fig.canvas.mpl_connect('button_press_event', self.on_click)
+        self.imshow = plt.imshow(self.collage.render().pixels)
+        plt.axis('off')
+        plt.show()
 
     def on_click(self, event: mpl.backend_bases.MouseEvent):
         x, y = int(np.round(event.xdata)), int(np.round(event.ydata))

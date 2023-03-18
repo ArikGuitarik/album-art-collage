@@ -6,6 +6,7 @@ from images import Collage
 
 
 class CollagePltUi:
+    """Displays the collage in a pyplot window, enabling the user to edit the alignment of the images."""
     def __init__(self, collage: Collage):
         self.collage = collage
         self.selected_grid_coordinates = None
